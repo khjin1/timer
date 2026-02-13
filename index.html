@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Timer</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#cfd7ff,#9fb1ff);
+  font-family:sans-serif;
+}
+
+.card{
+  background:#2f4fa3;
+  padding:30px;
+  border-radius:16px;
+  color:white;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+}
+
+.time{
+  margin:20px 0;
+}
+
+.time input{
+  width:70px;
+  font-size:28px;
+  text-align:center;
+  border:none;
+  border-radius:8px;
+  margin:0 4px;
+  padding:6px;
+}
+
+button{
+  border:none;
+  padding:10px 20px;
+  margin:5px;
+  border-radius:20px;
+  font-size:16px;
+  color:white;
+  cursor:pointer;
+}
+
+#start{
+  background:#4a86ff;
+}
+
+#start.running{
+  background:#2ecc71;
+}
+
+#reset{
+  background:#ff5a7a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>TIMER</h2>
+
+  <div class="time">
+    <input id="hrs" type="number" min="0" value="0"> :
+    <input id="min" type="number" min="0" value="0"> :
+    <input id="sec" type="number" min="0" value="0">
+  </div>
+
+  <button id="start">START</button>
+  <button id="reset">RESET</button>
+</div>
+
+<script>
+let interval = null;
+let total = 0;
+
+const hrs = document.getElementById('hrs');
+const min = document.getElementById('min');
+const sec = document.getElementById('sec');
+const startBtn = document.getElementById('start');
+
+function show(t){
+  const h = Math.floor(t/3600);
+  const m = Math.floor((t%3600)/60);
+  const s = t%60;
+
+  hrs.value = h;
+  min.value = m;
+  sec.value = s;
+}
+
+function getInput(){
+  return Number(hrs.value)*3600 +
+          Number(min.value)*60 +
+          Number(sec.value);
+}
+
+startBtn.onclick = () => {
+
+  // START → 실행
+  if(interval === null){
+    if(total === 0) total = getInput();
+    if(total === 0) return;
+
+    interval = setInterval(()=>{
+      total--;
+      show(total);
+
+      if(total <= 0){
+        clearInterval(interval);
+        interval = null;
+        total = 0;
+        startBtn.textContent="START";
+        startBtn.classList.remove("running");
+      }
+    },1000);
+
+    startBtn.textContent="PAUSE";
+    startBtn.classList.add("running");
+  }
+
+  // PAUSE
+  else{
+    clearInterval(interval);
+    interval = null;
+    startBtn.textContent="START";
+    startBtn.classList.remove("running");
+  }
+};
+
+document.getElementById('reset').onclick = () => {
+  clearInterval(interval);
+  interval=null;
+  total=0;
+  show(0);
+  startBtn.textContent="START";
+  startBtn.classList.remove("running");
+};
+</script>
+
+</body>
+</html>
